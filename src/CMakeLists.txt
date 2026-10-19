@@ -1,6 +1,8 @@
 # This is the main binary. List your C files here.
 add_executable(realtime
-    hello_freertos.c
+    task_delay.c
+    # sleep.c
+    # timer.c
     )
 
 pico_set_program_name(realtime "realtime_lab")
@@ -8,8 +10,8 @@ pico_set_program_version(realtime "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB.
 # These are mutually exclusive, only set one.
-pico_enable_stdio_uart(realtime 1)
-pico_enable_stdio_usb(realtime 0)
+pico_enable_stdio_uart(realtime 0)
+pico_enable_stdio_usb(realtime 1)
 
 # Add the libraries to the build
 target_link_libraries(realtime PRIVATE

@@ -1,11 +1,18 @@
 #include <FreeRTOS.h>
+#include <hardware/gpio.h>
+#include <hardware/pio.h>
+#include <hardware/pio_instructions.h>
 #include <pico/stdlib.h>
 #include <stdio.h>
 #include <task.h>
 
+#define OUT_PIN 0
+#define DELAY_MS 10
+
 void main_task(__unused void *params) {
   int toggle = 0;
   while (1) {
+    printf("toggling...\n");
     toggle = !toggle;
     gpio_put(OUT_PIN, toggle);
     vTaskDelay(pdMS_TO_TICKS(DELAY_MS));
