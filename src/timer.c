@@ -2,10 +2,16 @@
 #include <pico/sync.h>
 #include <stdio.h>
 
+// Busy-wait iterations after the GPIO toggle (0 = no delay)
+#ifndef BUSY_WAIT
+#define BUSY_WAIT 0
+#endif
+
 int toggle = 1;
 bool timer_callback(__unused struct repeating_timer *t) {
   toggle = !toggle;
   gpio_put(OUT_PIN, toggle);
+  for (volatile int i = 0; i < BUSY_WAIT; i++);
   return true;
 }
 
