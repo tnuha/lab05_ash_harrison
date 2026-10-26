@@ -1,3 +1,6 @@
+# Output pin shared by every program (scope probe stays on GP7)
+add_compile_definitions(OUT_PIN=7)
+
 # This is the main binary. List your C files here.
 add_executable(realtime
     task_delay.c
@@ -41,8 +44,23 @@ add_custom_target(openocd_flash ${OPENOCD} -s ${OPENOCD_PATH} -f interface/cmsis
 
 # Activity 2
 add_executable(irq gpio_interrupt.c)
-target_compile_definitions(irq PRIVATE IN_PIN=6 OUT_PIN=7)
+target_compile_definitions(irq PRIVATE IN_PIN=6)
 pico_enable_stdio_uart(irq 0)
 pico_enable_stdio_usb(irq 1)
 target_link_libraries(irq PRIVATE pico_stdlib)
 pico_add_extra_outputs(irq)
+
+# Activity 1: timekeeping (same period as task_delay.c)
+add_executable(timer timer.c)
+target_compile_definitions(timer PRIVATE DELAY_MS=10)
+pico_enable_stdio_uart(timer 0)
+pico_enable_stdio_usb(timer 1)
+target_link_libraries(timer PRIVATE pico_stdlib)
+pico_add_extra_outputs(timer)
+
+add_executable(sleep sleep.c)
+target_compile_definitions(sleep PRIVATE DELAY_MS=10)
+pico_enable_stdio_uart(sleep 0)
+pico_enable_stdio_usb(sleep 1)
+target_link_libraries(sleep PRIVATE pico_stdlib)
+pico_add_extra_outputs(sleep)
