@@ -35,6 +35,9 @@ int main(void) {
               tskIDLE_PRIORITY + 1UL, &task);
   xTaskCreate(unused_task, "UnusedThread", configMINIMAL_STACK_SIZE, NULL,
               tskIDLE_PRIORITY + 1UL, &unused_task);
+  xTaskCreate(unused_task, "UnusedThread2", configMINIMAL_STACK_SIZE, NULL,
+              tskIDLE_PRIORITY + 1UL, &unused_task);
   vTaskStartScheduler();
+
   return 0;
 }
