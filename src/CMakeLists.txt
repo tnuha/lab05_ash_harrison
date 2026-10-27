@@ -10,6 +10,7 @@ add_executable(realtime
 
 pico_set_program_name(realtime "realtime_lab")
 pico_set_program_version(realtime "0.1")
+target_compile_definitions(realtime PRIVATE BUSY_TASKS=2)
 
 # Modify the below lines to enable/disable output over UART/USB.
 # These are mutually exclusive, only set one.
@@ -44,22 +45,22 @@ add_custom_target(openocd_flash ${OPENOCD} -s ${OPENOCD_PATH} -f interface/cmsis
 
 # Activity 2
 add_executable(irq gpio_interrupt.c)
-target_compile_definitions(irq PRIVATE IN_PIN=6)
+target_compile_definitions(irq PRIVATE IN_PIN=6 BUSY_WAIT=10000)
 pico_enable_stdio_uart(irq 0)
 pico_enable_stdio_usb(irq 1)
 target_link_libraries(irq PRIVATE pico_stdlib)
 pico_add_extra_outputs(irq)
 
-# Activity 1: timekeeping (same period as task_delay.c)
+# Activity 1
 add_executable(timer timer.c)
-target_compile_definitions(timer PRIVATE DELAY_MS=10)
+target_compile_definitions(timer PRIVATE DELAY_MS=10 BUSY_WAIT=10000)
 pico_enable_stdio_uart(timer 0)
 pico_enable_stdio_usb(timer 1)
 target_link_libraries(timer PRIVATE pico_stdlib)
 pico_add_extra_outputs(timer)
 
 add_executable(sleep sleep.c)
-target_compile_definitions(sleep PRIVATE DELAY_MS=10)
+target_compile_definitions(sleep PRIVATE DELAY_MS=10 BUSY_WAIT=10000)
 pico_enable_stdio_uart(sleep 0)
 pico_enable_stdio_usb(sleep 1)
 target_link_libraries(sleep PRIVATE pico_stdlib)
