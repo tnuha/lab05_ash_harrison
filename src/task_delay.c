@@ -6,8 +6,11 @@
 #include <stdio.h>
 #include <task.h>
 
-#define OUT_PIN 0
 #define DELAY_MS 10
+
+#ifndef BUSY_TASKS
+#define BUSY_TASKS 1
+#endif
 
 void main_task(__unused void *params) {
   int toggle = 0;
@@ -15,28 +18,25 @@ void main_task(__unused void *params) {
     printf("toggling...\n");
     toggle = !toggle;
     gpio_put(OUT_PIN, toggle);
-    vTaskDelay(pdMS_TO_TICKS(DELAY_MS));
+    vTaskDelay(1);
   }
 }
 
-void unused_task(__unused void *params) {
-  while (1) {
-    vTaskDelay(1); // delay for one tick
-  }
-}
+void busy_task(__unused void *params) { while (1) { } }   // never yields
 
 int main(void) {
   stdio_init_all();
   gpio_init(OUT_PIN);
   gpio_set_dir(OUT_PIN, GPIO_OUT);
   const char *rtos_name = "FreeRTOS";
-  TaskHandle_t task, unused_task;
+  TaskHandle_t task;
   xTaskCreate(main_task, "MainThread", configMINIMAL_STACK_SIZE, NULL,
               tskIDLE_PRIORITY + 1UL, &task);
-  xTaskCreate(unused_task, "UnusedThread", configMINIMAL_STACK_SIZE, NULL,
-              tskIDLE_PRIORITY + 1UL, &unused_task);
-  xTaskCreate(unused_task, "UnusedThread2", configMINIMAL_STACK_SIZE, NULL,
-              tskIDLE_PRIORITY + 1UL, &unused_task);
+  // Number of busy-loop tasks competing with the toggle task (set in CMake)
+  for (int i = 0; i < BUSY_TASKS; i++) {
+    xTaskCreate(busy_task, "BusyThread", configMINIMAL_STACK_SIZE, NULL,
+                tskIDLE_PRIORITY + 1UL, NULL);
+  }
   vTaskStartScheduler();
 
   return 0;
